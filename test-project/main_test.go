@@ -1,3 +1,4 @@
+// Package main provides basic arithmetic functions.
 package main
 
 import "testing"
@@ -12,7 +13,6 @@ func TestAdd(t *testing.T) {
 		{"zero", 0, 5, 5},
 		{"negative", -1, 1, 0},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Add(tt.a, tt.b); got != tt.want {
@@ -32,7 +32,6 @@ func TestMultiply(t *testing.T) {
 		{"zero", 0, 5, 0},
 		{"negative", -2, 3, -6},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Multiply(tt.x, tt.y); got != tt.want {
