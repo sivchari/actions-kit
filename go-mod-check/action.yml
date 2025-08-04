@@ -1,0 +1,53 @@
+name: 'Go Mod Check'
+description: 'Check if go.mod and go.sum are tidy and up-to-date'
+author: 'sivchari'
+
+inputs:
+  go-version-file:
+    description: 'Path to go.mod file for Go version detection'
+    required: false
+    default: 'go.mod'
+  working-directory:
+    description: 'Working directory to run mod check in'
+    required: false
+    default: '.'
+  check-tools:
+    description: 'Also check tools/go.mod if it exists'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@f6164bd40689b23db8b25a93313d00c20e5f9173 # v5
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        cache: true
+        cache-dependency-path: ${{ inputs.working-directory }}/go.sum
+
+    - name: Check go.mod and go.sum
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "::group::Checking go.mod and go.sum"
+        go mod tidy -diff
+        echo "::endgroup::"
+
+    - name: Check tools/go.mod and tools/go.sum
+      if: inputs.check-tools == 'true'
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -d "tools" ] && [ -f "tools/go.mod" ]; then
+          echo "::group::Checking tools/go.mod and tools/go.sum"
+          cd tools
+          go mod tidy -diff
+          echo "::endgroup::"
+        else
+          echo "tools/go.mod not found, skipping tools check"
+        fi
+
+branding:
+  icon: 'package'
+  color: 'orange'

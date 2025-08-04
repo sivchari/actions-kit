@@ -47,6 +47,12 @@ runs:
         args: ${{ inputs.lint-args }}
         timeout: ${{ inputs.lint-timeout }}
 
+    - name: Check go modules
+      uses: ./go-mod-check
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        working-directory: ${{ inputs.working-directory }}
+
 branding:
   icon: 'check-circle'
   color: 'green'

@@ -45,6 +45,14 @@ runs:
       run: |
         $(go env GOPATH)/bin/golangci-lint run ./... --timeout ${{ inputs.timeout }} -v ${{ inputs.args }}
 
+    - name: Check code formatting
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "::group::Checking code formatting"
+        $(go env GOPATH)/bin/golangci-lint fmt --diff ./...
+        echo "::endgroup::"
+
 branding:
   icon: 'shield'
   color: 'blue'
