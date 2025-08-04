@@ -12,10 +12,17 @@ Runs Go tests with race detection and shuffle enabled.
 ```
 
 ### golangci-lint
-Runs golangci-lint with configurable options.
+Runs golangci-lint with configurable options and optional format checking.
 
 ```yaml
 - uses: sivchari/actions-kit/golangci-lint@main
+```
+
+### go-mod-check
+Checks if go.mod and go.sum are tidy and up-to-date.
+
+```yaml
+- uses: sivchari/actions-kit/go-mod-check@main
 ```
 
 ## Usage Examples
@@ -73,6 +80,7 @@ The root action supports various configuration options:
     golangci-lint-version: 'v1.55.2'   # Specific linter version
     lint-args: '--enable-all'          # Additional lint args
     lint-timeout: '10m'                 # Lint timeout (default: 5m)
+    check-tools: 'true'                 # Check tools/go.mod (default: true)
 ```
 
 For detailed configuration options, see the README in each action's directory.
