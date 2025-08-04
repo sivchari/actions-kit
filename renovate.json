@@ -1,0 +1,65 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "security:openssf-scorecard",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeDigest",
+    ":automergeBranch",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "labels": [
+    "dependencies"
+  ],
+  "assignees": [
+    "sivchari"
+  ],
+  "reviewers": [
+    "sivchari"
+  ],
+  "schedule": [
+    "before 4am on monday"
+  ],
+  "timezone": "Asia/Tokyo",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "before 4am on monday"
+    ]
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "pinDigests": true,
+      "automerge": true,
+      "schedule": [
+        "at any time"
+      ]
+    },
+    {
+      "matchDepTypes": ["action"],
+      "pinDigests": true,
+      "automerge": true
+    },
+    {
+      "matchPackageNames": ["actions/checkout"],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": ["actions/setup-go"],
+      "automerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)action\\.ya?ml$"],
+      "matchStrings": [
+        "uses:\\s+(?<depName>[^@\\s]+)@(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    }
+  ]
+}

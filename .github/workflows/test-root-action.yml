@@ -1,0 +1,30 @@
+name: Test Root Action
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-root-action:
+    name: Test Root Action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Test root action
+        uses: ./
+        with:
+          working-directory: './test-project'
+          test-args: '-v -coverprofile=coverage.out'
+          golangci-lint-version: 'v1.55.2'
+          lint-args: '--verbose'
+          lint-timeout: '10m'
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4
+        with:
+          name: coverage-report
+          path: test-project/coverage.out

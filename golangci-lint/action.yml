@@ -1,0 +1,50 @@
+name: 'golangci-lint'
+description: 'Run golangci-lint with configurable options'
+author: 'sivchari'
+
+inputs:
+  go-version-file:
+    description: 'Path to go.mod file for Go version detection'
+    required: false
+    default: 'go.mod'
+  working-directory:
+    description: 'Working directory to run linter in'
+    required: false
+    default: '.'
+  golangci-lint-version:
+    description: 'Version of golangci-lint to use'
+    required: false
+    default: 'latest'
+  args:
+    description: 'Additional arguments to pass to golangci-lint'
+    required: false
+    default: ''
+  timeout:
+    description: 'Timeout for golangci-lint execution'
+    required: false
+    default: '5m'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@f6164bd40689b23db8b25a93313d00c20e5f9173 # v5
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        cache: true
+        cache-dependency-path: ${{ inputs.working-directory }}/go.sum
+
+    - name: Install golangci-lint
+      shell: bash
+      run: |
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin ${{ inputs.golangci-lint-version }}
+
+    - name: Run golangci-lint
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        $(go env GOPATH)/bin/golangci-lint run ./... --timeout ${{ inputs.timeout }} -v ${{ inputs.args }}
+
+branding:
+  icon: 'shield'
+  color: 'blue'

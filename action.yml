@@ -1,0 +1,52 @@
+name: 'Go CI Kit'
+description: 'Complete CI solution for Go projects - runs tests and linting'
+author: 'sivchari'
+
+inputs:
+  go-version-file:
+    description: 'Path to go.mod file for Go version detection'
+    required: false
+    default: 'go.mod'
+  working-directory:
+    description: 'Working directory to run actions in'
+    required: false
+    default: '.'
+  test-args:
+    description: 'Additional arguments to pass to go test'
+    required: false
+    default: ''
+  golangci-lint-version:
+    description: 'Version of golangci-lint to use'
+    required: false
+    default: 'latest'
+  lint-args:
+    description: 'Additional arguments to pass to golangci-lint'
+    required: false
+    default: ''
+  lint-timeout:
+    description: 'Timeout for golangci-lint execution'
+    required: false
+    default: '5m'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Go tests
+      uses: ./go-test
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        working-directory: ${{ inputs.working-directory }}
+        test-args: ${{ inputs.test-args }}
+
+    - name: Run golangci-lint
+      uses: ./golangci-lint
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        working-directory: ${{ inputs.working-directory }}
+        golangci-lint-version: ${{ inputs.golangci-lint-version }}
+        args: ${{ inputs.lint-args }}
+        timeout: ${{ inputs.lint-timeout }}
+
+branding:
+  icon: 'check-circle'
+  color: 'green'

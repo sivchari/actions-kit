@@ -1,0 +1,24 @@
+name: Validate Actions
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  actionlint:
+    name: Lint GitHub Actions workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+
+      - name: Run actionlint
+        uses: raven-actions/actionlint@4974f8c8366b6b7e4d8b2deba5fcb3a18cf29ceb # v1
+        with:
+          files: |
+            .github/workflows/*.yml
+            action.yml
+            go-test/action.yml
+            golangci-lint/action.yml
