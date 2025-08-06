@@ -44,14 +44,14 @@ runs:
   using: 'composite'
   steps:
     - name: Run Go tests
-      uses: ./go-test
+      uses: sivchari/actions-kit/go-test@main
       with:
         go-version-file: ${{ inputs.go-version-file }}
         working-directory: ${{ inputs.working-directory }}
         test-args: ${{ inputs.test-args }}
 
     - name: Run golangci-lint
-      uses: ./golangci-lint
+      uses: sivchari/actions-kit/golangci-lint@main
       with:
         go-version-file: ${{ inputs.go-version-file }}
         working-directory: ${{ inputs.working-directory }}
@@ -60,14 +60,14 @@ runs:
         timeout: ${{ inputs.lint-timeout }}
 
     - name: Check go modules
-      uses: ./go-mod-check
+      uses: sivchari/actions-kit/go-mod-check@main
       with:
         go-version-file: ${{ inputs.go-version-file }}
         working-directory: ${{ inputs.working-directory }}
 
     - name: Check GoReleaser configuration
       if: inputs.skip-goreleaser-check != 'true'
-      uses: ./goreleaser-check
+      uses: sivchari/actions-kit/goreleaser-check@main
       with:
         go-version-file: ${{ inputs.go-version-file }}
         working-directory: ${{ inputs.working-directory }}
