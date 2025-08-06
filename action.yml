@@ -27,6 +27,18 @@ inputs:
     description: 'Timeout for golangci-lint execution'
     required: false
     default: '5m'
+  goreleaser-version:
+    description: 'Version of GoReleaser to use'
+    required: false
+    default: '~> v2'
+  goreleaser-args:
+    description: 'Additional arguments to pass to GoReleaser check'
+    required: false
+    default: ''
+  skip-goreleaser-check:
+    description: 'Skip GoReleaser configuration check'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -52,6 +64,15 @@ runs:
       with:
         go-version-file: ${{ inputs.go-version-file }}
         working-directory: ${{ inputs.working-directory }}
+
+    - name: Check GoReleaser configuration
+      if: inputs.skip-goreleaser-check != 'true'
+      uses: ./goreleaser-check
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        working-directory: ${{ inputs.working-directory }}
+        goreleaser-version: ${{ inputs.goreleaser-version }}
+        args: ${{ inputs.goreleaser-args }}
 
 branding:
   icon: 'check-circle'
