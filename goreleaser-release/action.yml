@@ -1,0 +1,49 @@
+name: 'GoReleaser Release'
+description: 'Run GoReleaser to create a release'
+author: 'sivchari'
+
+inputs:
+  go-version-file:
+    description: 'Path to go.mod file for Go version detection'
+    required: false
+    default: 'go.mod'
+  working-directory:
+    description: 'Working directory to run GoReleaser in'
+    required: false
+    default: '.'
+  goreleaser-version:
+    description: 'Version of GoReleaser to use'
+    required: false
+    default: '~> v2'
+  args:
+    description: 'Additional arguments to pass to GoReleaser release'
+    required: false
+    default: '--clean'
+  github-token:
+    description: 'GitHub token for creating releases'
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+      with:
+        go-version-file: ${{ inputs.go-version-file }}
+        cache: true
+        cache-dependency-path: ${{ inputs.working-directory }}/go.sum
+
+    - name: Run GoReleaser
+      uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200 # v6.0.0
+      with:
+        distribution: goreleaser
+        version: ${{ inputs.goreleaser-version }}
+        args: release ${{ inputs.args }}
+        workdir: ${{ inputs.working-directory }}
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+
+branding:
+  icon: 'package'
+  color: 'green'
