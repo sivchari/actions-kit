@@ -34,22 +34,27 @@ runs:
         cache: true
         cache-dependency-path: ${{ inputs.working-directory }}/go.sum
 
+    # install.sh matches checksums with a bare grep, so since v2.15.0 the
+    # *.tar.gz.sbom.json line also matches and verification always fails.
+    # The official action downloads the release archive directly.
     - name: Install golangci-lint
-      shell: bash
-      run: |
-        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin ${{ inputs.golangci-lint-version }}
+      uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
+      with:
+        version: ${{ inputs.golangci-lint-version }}
+        install-only: true
+        working-directory: ${{ inputs.working-directory }}
 
     - name: Run golangci-lint
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        $(go env GOPATH)/bin/golangci-lint run ./... --timeout ${{ inputs.timeout }} -v ${{ inputs.args }}
+        golangci-lint run ./... --timeout ${{ inputs.timeout }} -v ${{ inputs.args }}
 
     - name: Check code formatting
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        $(go env GOPATH)/bin/golangci-lint fmt ./... -v ${{inputs.args }}
+        golangci-lint fmt ./... -v ${{inputs.args }}
 
 branding:
   icon: 'shield'
